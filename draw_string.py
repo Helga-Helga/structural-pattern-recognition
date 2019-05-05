@@ -29,4 +29,5 @@ if __name__ == "__main__":
     characters = create_letters_images(letters, size)
     string = "ABCCAABBB"
     image = draw_string(string, characters)
+    print("Image size: {}".format(image.size))
     image.show()

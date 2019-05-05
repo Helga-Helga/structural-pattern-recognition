@@ -20,6 +20,7 @@ def create_letters_images(characters, size):
         # Crop image (remove areas with transparent background)
         bbox = image.convert("RGBa").getbbox()
         images[c] = image.crop(bbox)
+        images[c] = images[c].convert("L")
 
     images = align_image_sizes(characters, images)
     return images
