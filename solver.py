@@ -30,19 +30,21 @@ def dynamic_programming_solver(nodes, edges):
     :return: array of letter indexes
     """
     argmin_nodes = zeros(nodes.shape[0], dtype=int)
-    for i in range(nodes.shape[0]):
-        for k in range(nodes.shape[1]):
+    for obj in range(1, nodes.shape[0]):
+        for label in range(nodes.shape[1]):
             min_value = inf
-            for k_ in range(nodes.shape[1]):
-                if i == nodes.shape[0] - 1:
-                    if nodes[i, k_] < min_value:
-                        min_value = nodes[i, k_]
-                        argmin_nodes[i] = k_
-                    continue
-                if edges[i, i+1, k_, k] + nodes[i, k_] < min_value:
-                    min_value = edges[i, i+1, k_, k] + nodes[i, k_]
-                    argmin_nodes[i] = k_
-            nodes[i, k] += min_value
+            for nbr_label in range(nodes.shape[1]):
+                if edges[obj-1, obj, nbr_label, label] + nodes[obj-1, nbr_label] < min_value:
+                    min_value = edges[obj-1, obj, nbr_label, label] + nodes[obj-1, nbr_label]
+                    argmin_nodes[obj-1] = nbr_label
+            nodes[obj, label] += min_value
+
+    # Find label for the last object (letter)
+    min_value = inf
+    for label in range(nodes.shape[1]):
+        if nodes[nodes.shape[0]-1, label] < min_value:
+            min_value = nodes[nodes.shape[0]-1, label]
+            argmin_nodes[obj] = label
     return argmin_nodes
 
 
