@@ -1,4 +1,4 @@
-from numpy import zeros, array, insert
+from numpy import zeros, array
 from generate_string import generate_string
 from draw_string import draw_string
 from draw_string import create_letters_images
@@ -28,8 +28,8 @@ def find_subimage_start_index(character_number, character_width):
     :return: start position in string image of character of given number
     """
     if character_number == 0:
-        return 1
-    return (character_number - 1) * character_width
+        return 0
+    return character_number * character_width
 
 
 def node_weight(string_image, character_image, character_number):
@@ -72,6 +72,7 @@ if __name__ == "__main__":
     string = generate_string(labels, n)
     characters = create_letters_images(labels, 200)
     image = draw_string(string, characters)
+    print(string)
 
     nodes, edges = initialize_graph(n, labels)
     list_characters = [c for c in characters.values()]
