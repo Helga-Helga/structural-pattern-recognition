@@ -33,8 +33,8 @@ def generate_noise(width, height, mu=255.0/2, sigma=255.0/2):
     return noise
 
 
-def get_noised_image(image, sigma):
-    noise = generate_noise(image.size[0], image.size[1], 0, sigma)
+def get_noised_image(image, mu=255.0/2, sigma=255.0/2):
+    noise = generate_noise(image.size[0], image.size[1], mu, sigma)
     image.paste(Image.new('RGB', (image.size[0], image.size[1]), 'black'), mask=noise)
     return image
 

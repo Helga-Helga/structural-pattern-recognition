@@ -72,7 +72,7 @@ if __name__ == "__main__":
     print("Input string:           {}".format(string))
 
     # Add noise to image
-    image = get_noised_image(image, sigma=255)
+    image = get_noised_image(image, mu=0, sigma=255)
     image.show()
 
     # Build graph
