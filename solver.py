@@ -13,12 +13,12 @@ def min_solver(nodes):
     :return: array of letter indexes
     """
     argmin_nodes = zeros(nodes.shape[0], dtype=int)
-    for i in range(nodes.shape[0]):
+    for obj in range(nodes.shape[0]):
         min_value = inf
-        for k in range(nodes.shape[1]):
-            if nodes[i, k] < min_value:
-                min_value = nodes[i, k]
-                argmin_nodes[i] = k
+        for label in range(nodes.shape[1]):
+            if nodes[obj, label] < min_value:
+                min_value = nodes[obj, label]
+                argmin_nodes[obj] = label
     return argmin_nodes
 
 
@@ -65,9 +65,8 @@ if __name__ == "__main__":
 
     # Generate string and create image of it
     string = generate_string(labels, n)
-    characters = create_letters_images(labels, 200)
+    characters = create_letters_images(labels, size=200)
     image = draw_string(string, characters)
-    image.show()
     print("Input string:           {}".format(string))
 
     # Add noise to image
