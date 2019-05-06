@@ -1,4 +1,6 @@
-from PIL import Image
+from PIL import Image, ImageDraw
+from numpy import array, random
+from random import gauss
 from draw_letters import create_letters_images
 
 
@@ -19,7 +21,21 @@ def draw_string(string, characters):
     for character in images:
         image.paste(character, (horizontal_offset, 0))
         horizontal_offset += character.size[0]
+    return image
 
+
+def generate_noise(width, height, mu=255.0/2, sigma=255.0/2):
+    noise = Image.new('RGBA', (width, height), 'black')
+    draw = ImageDraw.Draw(noise)
+    for i in range(width):
+        for j in range(height):
+            draw.point((i, j), fill=(0, 0, 0, int(gauss(mu, sigma))))
+    return noise
+
+
+def get_noised_image(image, sigma):
+    noise = generate_noise(image.size[0], image.size[1], 0, sigma)
+    image.paste(Image.new('RGB', (image.size[0], image.size[1]), 'black'), mask=noise)
     return image
 
 
@@ -30,4 +46,7 @@ if __name__ == "__main__":
     string = "ABCCAABBB"
     image = draw_string(string, characters)
     print("Image size: {}".format(image.size))
+    image.show()
+
+    image = get_noised_image(image, 255)
     image.show()

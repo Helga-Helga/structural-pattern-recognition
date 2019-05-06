@@ -1,7 +1,7 @@
 from numpy import inf, zeros
 from generate_string import generate_string
 from draw_letters import create_letters_images
-from draw_string import draw_string
+from draw_string import draw_string, get_noised_image
 from create_graph import initialize_graph, fill_nodes
 
 
@@ -60,17 +60,29 @@ def get_result_string(argmin_nodes, labels):
 
 
 if __name__ == "__main__":
-    n = 20
-    labels = ['A', 'B', 'C', ' ']
+    n = 10  # Number of symbols in string
+    labels = ['A', 'B', 'C', ' ']  # Alphabet
+
+    # Generate string and create image of it
     string = generate_string(labels, n)
     characters = create_letters_images(labels, 200)
     image = draw_string(string, characters)
+    image.show()
     print("Input string:           {}".format(string))
 
+    # Add noise to image
+    image = get_noised_image(image, sigma=255)
+    image.show()
+
+    # Build graph
     nodes, edges = initialize_graph(n, labels)
     list_characters = [c for c in characters.values()]
     image = image.convert("L")
     nodes = fill_nodes(nodes, image, list_characters)
-    print("Recognized taking min:  {}".format(get_result_string(min_solver(nodes), labels)))
 
-    print("Recognized dynamically: {}".format(get_result_string(dynamic_programming_solver(nodes, edges), labels)))
+    # Solve problem
+    result_min = min_solver(nodes)
+    print("Recognized taking min:  {}".format(get_result_string(result_min, labels)))
+
+    result_dynamic = dynamic_programming_solver(nodes, edges)
+    print("Recognized dynamically: {}".format(get_result_string(result_dynamic, labels)))
