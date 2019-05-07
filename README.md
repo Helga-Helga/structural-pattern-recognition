@@ -9,6 +9,7 @@ It is possible to choose size of font (parameter `size` in `create_letters_image
 Then gaussian noise is added to image with given `mu` and `sigma` (function `get_noised_image`).
 
 Example of noised image:
+
 ![](images_for_readme/noised_image.png)
 
 ## Task
@@ -44,9 +45,13 @@ So, it is correct to take a node in each object that has minimum weight.
 This approach is more general.
 There is no need for edges to have zero weights.
 For such part of graph
+
 ![](images_for_readme/graph_part.png)
+
 formula for recomputing node weight is
+
 ![](https://latex.codecogs.com/png.latex?q_%7Bi&plus;1%7D%5Cleft%28A%20%5Cright%20%29%20%3D%20q_%7Bi&plus;1%7D%5Cleft%28A%20%5Cright%20%29%20&plus;%20%5Cmin%5Climits_%7Bk%5Cin%20K%7D%20%5Cleft%5B%20g_%7Bi%2Ci&plus;1%7D%5Cleft%28k%2C%20A%20%5Cright%20%29%20&plus;%20q_i%5Cleft%28k%20%5Cright%20%29%5Cright%5D%2C%20i%3D%5Coverline%7B0%2Cn-1%7D)
+
 where `n` is number of objects (or number of characters in image).
 This should be done for all nodes in all objects.
 
