@@ -62,28 +62,31 @@ def get_result_string(argmin_nodes, labels):
 
 
 if __name__ == "__main__":
-    n = 10  # Number of symbols in string
-    labels = ['A', 'B', 'C', ' ']  # Alphabet
+    N = 10  # Number of symbols in string
+    LABELS = ['A', 'B', 'C', ' ']  # Alphabet
+    SIZE = 50  # Size of font
+    MU = 0  # Mean for gaussian distribution
+    SIGMA = 255 * 2  # Standard deviation for gaussian distribution
 
     # Generate string and create image of it
-    string = generate_string(labels, n)
-    characters = create_letters_images(labels, size=50)
+    string = generate_string(LABELS, N)
+    characters = create_letters_images(LABELS, SIZE)
     image = draw_string(string, characters)
     print("Input string:           {}".format(string))
 
     # Add noise to image
-    image = get_noised_image(image, mu=0, sigma=255*2)
+    image = get_noised_image(image, MU, SIGMA)
     image.show()
 
     # Build graph
-    nodes, edges = initialize_graph(n, labels)
+    nodes, edges = initialize_graph(N, LABELS)
     list_characters = [c for c in characters.values()]
     image = image.convert("L")
     nodes = fill_nodes(nodes, image, list_characters)
 
     # Solve problem
     result_min = min_solver(nodes)
-    print("Recognized taking min:  {}".format(get_result_string(result_min, labels)))
+    print("Recognized taking min:  {}".format(get_result_string(result_min, LABELS)))
 
     result_dynamic = dynamic_programming_solver(nodes, edges)
-    print("Recognized dynamically: {}".format(get_result_string(result_dynamic, labels)))
+    print("Recognized dynamically: {}".format(get_result_string(result_dynamic, LABELS)))

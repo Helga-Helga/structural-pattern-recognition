@@ -24,7 +24,9 @@ In each object there are so much nodes, as the number of characters in alphabet.
 Nodes in each two neighbours are connected with edges, edge weights are zero.
 So, all objects with nodes is 2d array, containing weights.
 Weight of a node `(i, k)` is a sum of squared differences between pixels in the part of noised image and image of character (because of gaussian noise)
+
 ![](images_for_readme/node_weight.png)
+
 where
 - `i` is a number of an object
 - `k` is a node in this object responding to some character
@@ -58,3 +60,7 @@ This should be done for all nodes in all objects.
 ### Results of recognition
 ![](images_for_readme/result.png)
 
+## How to use
+Open `solver.py`.
+In `if __name__ == "__main__"` block change parameter values.
+Run `python solve.py` from a directory with project.
