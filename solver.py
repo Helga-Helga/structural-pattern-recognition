@@ -67,12 +67,12 @@ if __name__ == "__main__":
 
     # Generate string and create image of it
     string = generate_string(labels, n)
-    characters = create_letters_images(labels, size=200)
+    characters = create_letters_images(labels, size=50)
     image = draw_string(string, characters)
     print("Input string:           {}".format(string))
 
     # Add noise to image
-    image = get_noised_image(image, mu=0, sigma=255)
+    image = get_noised_image(image, mu=0, sigma=255*2)
     image.show()
 
     # Build graph
