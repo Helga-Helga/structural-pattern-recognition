@@ -1,6 +1,5 @@
-from PIL import Image, ImageDraw
+from PIL import Image
 from numpy import array, random
-from random import gauss
 from draw_letters import create_letters_images
 
 
@@ -24,19 +23,18 @@ def draw_string(string, characters):
     return image
 
 
-def generate_noise(width, height, mu=255.0/2, sigma=255.0/2):
-    noise = Image.new('RGBA', (width, height), 'black')
-    draw = ImageDraw.Draw(noise)
-    for i in range(width):
-        for j in range(height):
-            draw.point((i, j), fill=(0, 0, 0, int(gauss(mu, sigma))))
-    return noise
-
-
-def get_noised_image(image, mu=255.0/2, sigma=255.0/2):
-    noise = generate_noise(image.size[0], image.size[1], mu, sigma)
-    image.paste(Image.new('RGB', (image.size[0], image.size[1]), 'black'), mask=noise)
-    return image
+def get_noised_image(image, mu=0, sigma=0):
+    """
+    Adds gaussian noise to the image
+    :param image: image of character sequence
+    :param mu: mean of the distribution
+    :param sigma: standard deviation of the distribution
+    :return: noised image
+    """
+    noise = random.normal(mu, sigma, size=(image.size[1], image.size[0]))
+    image_array = array(image.convert("L"), dtype="float64")
+    image_array += noise
+    return Image.fromarray(image_array.clip(0, 255).astype("uint8"), mode="L")
 
 
 if __name__ == "__main__":
@@ -48,5 +46,5 @@ if __name__ == "__main__":
     print("Image size: {}".format(image.size))
     image.show()
 
-    image = get_noised_image(image, 255)
+    image = get_noised_image(image, 0, 255 * 2)
     image.show()
