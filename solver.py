@@ -1,41 +1,42 @@
-from numpy import inf, zeros
 from generate_string import generate_string
 from draw_letters import create_letters_images
 from draw_string import draw_string, get_noised_image
 from create_graph import initialize_graph, fill_nodes, fill_edges, compose_labels
+from Semiring.SemiringArgminPlusElement import SemiringArgminPlusElement
 
 
-def dynamic_programming_solver(nodes, edges):
+def dynamic_programming_solver(nodes, edges, semiring=SemiringArgminPlusElement):
     """
     Dynamic programming algorithm for finding the best path (with minimum weight)
     :param nodes: 3d array of node weights
     :param edges: 3d array of edge weights
+    :param semiring: semiring class to use
     :return: 3d array of updated node weights
     """
     for obj in reversed(range(1, nodes.shape[0])):
         for label_l in range(nodes.shape[1]):
-            min_value = inf
+            min_value = semiring.get_zero()
             next_label = None
             for label_r in range(nodes.shape[2]):
-                if edges[obj-1, label_l, label_r] + nodes[obj, label_r, 0] < min_value:
-                    min_value = edges[obj-1, label_l, label_r] + nodes[obj, label_r, 0]
-                    next_label = label_r
-            nodes[obj-1, label_l, 0] += min_value
+                min_value, next_label = \
+                    min_value.add(edges[obj-1, label_l, label_r].mul(nodes[obj, label_r, 0]), next_label, label_r)
+            nodes[obj-1, label_l, 0] = nodes[obj-1, label_l, 0].mul(min_value)
             nodes[obj-1, label_l, 1] = next_label
     return nodes
 
 
-def get_best_path(nodes, labels):
+def get_best_path(nodes, labels, semiring=SemiringArgminPlusElement):
     """
     Finds path with minimum weight
     :param nodes: 3d array of updated node weights after dynamic programming
     :param labels: list of tuples like (name_of_character, number_of_column_of_this_character)
+    :param semiring: semiring class to use
     :return: best path presented as a list of consecutive labels and its weight
     """
     path = [0] * nodes.shape[0]
-    min_value = inf
+    min_value = semiring.get_zero()
     for label in range(nodes.shape[1]):
-        if nodes[0, label, 0] < min_value:
+        if nodes[0, label, 0].value < min_value.value:
             min_value = nodes[0, label, 0]
             path[0] = label
     for obj in range(1, nodes.shape[0]):

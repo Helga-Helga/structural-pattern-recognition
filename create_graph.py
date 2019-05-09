@@ -1,10 +1,11 @@
-from numpy import array, full, inf
+from numpy import array, full
 from generate_string import generate_string
 from draw_string import draw_string
 from draw_string import create_letters_images
+from Semiring.SemiringArgminPlusElement import SemiringArgminPlusElement
 
 
-def initialize_graph(n, k):
+def initialize_graph(n, k, semiring=SemiringArgminPlusElement):
     """
     Initialize nodes and weights of graph with infinite values
     Node: nodes[obj, obj_label, next_best_label]
@@ -12,10 +13,11 @@ def initialize_graph(n, k):
     Edge: edges[obj, obj + 1, label_l, label_r]
     :param n: number of objects
     :param k: number of labels in each object
+    :param semiring: semiring class to use
     :return: 3d array of nodes and 3d array of edges with infinite weights
     """
-    nodes = full((n, k, k), inf)
-    edges = full((n, k, k), inf)
+    nodes = full((n, k, k), semiring.get_zero())
+    edges = full((n, k, k), semiring.get_zero())
     return nodes, edges
 
 
@@ -34,13 +36,14 @@ def compose_labels(character_images, alphabet):
     return labels
 
 
-def fill_edges(edges, alphabet, character_images, labels):
+def fill_edges(edges, alphabet, character_images, labels, semiring=SemiringArgminPlusElement):
     """
     Defines allowable edges with zero weights
     :param edges: 3d array of edge weights
     :param alphabet: list of character names
     :param character_images: list of images of characters
     :param labels: list of tuples like (name_of_character, number_of_column_of_this_character)
+    :param semiring: semiring class to use
     :return: 3d array of edge weights with zero weights for allowable ones
     """
     for obj in range(edges.shape[0] - 1):
@@ -50,14 +53,14 @@ def fill_edges(edges, alphabet, character_images, labels):
                 width = character_images[letter_index].size[0]
                 # ('A', 1) -> ('A', 2)
                 if labels[label_r][1] - labels[label_l][1] == 1 and labels[label_l][0] == labels[label_r][0]:
-                    edges[obj, label_l, label_r] = 0
+                    edges[obj, label_l, label_r] = semiring.get_unity()
                 # ('A', width('A') - 1) -> ('B', 0)
                 if labels[label_l][1] == width - 1 and labels[label_r][1] == 0:
-                    edges[obj, label_l, label_r] = 0
+                    edges[obj, label_l, label_r] = semiring.get_unity()
     return edges
 
 
-def fill_nodes(nodes, image, alphabet, character_images, labels):
+def fill_nodes(nodes, image, alphabet, character_images, labels, semiring=SemiringArgminPlusElement):
     """
     Defines allowable nodes and computes their weights
     Weight of node ('A', 0) in first object is sum over pixels in image column of square differences
@@ -67,9 +70,10 @@ def fill_nodes(nodes, image, alphabet, character_images, labels):
     :param alphabet: list of character names
     :param character_images: list of images of characters
     :param labels: list of tuples like (name_of_character, number_of_column_of_this_character)
+    :param semiring: semiring class to use
     :return: 3d array of node weights
     """
-    image = array(image, dtype=float)
+    image = array(image, dtype=semiring)
     list_character_images = convert_images_to_arrays(character_images)
     for obj in range(nodes.shape[0]):
         for label in range(nodes.shape[1]):
@@ -84,7 +88,7 @@ def fill_nodes(nodes, image, alphabet, character_images, labels):
             weight = 0.
             for h_pixel in range(character_image.shape[0]):
                 weight += (image[h_pixel, obj] - character_image[h_pixel, labels[label][1]]) ** 2
-            nodes[obj, label, 0] = weight
+            nodes[obj, label, 0] = semiring(weight)
             nodes[obj, label, 1] = None
     return nodes
 
@@ -118,7 +122,7 @@ if __name__ == "__main__":
     nodes = fill_nodes(nodes, image, alphabet, list_characters, labels)
     edges = fill_edges(edges, alphabet, list_characters, labels)
 
-    print(nodes[0, 0, 0])  # should be not inf
+    print(nodes[0, 0, 0])  # should be not inf, not zero
     print(nodes[0, 1, 0])  # should be inf
     print(edges[0, 0, 1])  # should be zero
     print(edges[0, 0, 0])  # should be inf
