@@ -9,7 +9,7 @@ def dynamic_programming_solver(nodes, edges):
     """
     Dynamic programming algorithm for finding the best path (with minimum weight)
     :param nodes: 3d array of node weights
-    :param edges: 4d array of edge weights
+    :param edges: 3d array of edge weights
     :return: 3d array of updated node weights
     """
     for obj in reversed(range(1, nodes.shape[0])):
@@ -17,8 +17,8 @@ def dynamic_programming_solver(nodes, edges):
             min_value = inf
             next_label = None
             for label_r in range(nodes.shape[2]):
-                if edges[obj-1, obj, label_l, label_r] + nodes[obj, label_r, 0] < min_value:
-                    min_value = edges[obj-1, obj, label_l, label_r] + nodes[obj, label_r, 0]
+                if edges[obj-1, label_l, label_r] + nodes[obj, label_r, 0] < min_value:
+                    min_value = edges[obj-1, label_l, label_r] + nodes[obj, label_r, 0]
                     next_label = label_r
             nodes[obj-1, label_l, 0] += min_value
             nodes[obj-1, label_l, 1] = next_label

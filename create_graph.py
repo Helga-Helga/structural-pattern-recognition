@@ -9,13 +9,13 @@ def initialize_graph(n, k):
     Initialize nodes and weights of graph with infinite values
     Node: nodes[obj, obj_label, next_best_label]
     next_best_label is filled during dynamic programming
-    Edge: edges[obj_l, obj_r, label_l, label_r], where obj_r - obj_l = 1
+    Edge: edges[obj, obj + 1, label_l, label_r]
     :param n: number of objects
     :param k: number of labels in each object
-    :return: 3d array of nodes and 4d array of edges with infinite weights
+    :return: 3d array of nodes and 3d array of edges with infinite weights
     """
     nodes = full((n, k, k), inf)
-    edges = full((n, n, k, k), inf)
+    edges = full((n, k, k), inf)
     return nodes, edges
 
 
@@ -37,23 +37,23 @@ def compose_labels(character_images, alphabet):
 def fill_edges(edges, alphabet, character_images, labels):
     """
     Defines allowable edges with zero weights
-    :param edges: 4d array of edge weights
+    :param edges: 3d array of edge weights
     :param alphabet: list of character names
     :param character_images: list of images of characters
     :param labels: list of tuples like (name_of_character, number_of_column_of_this_character)
-    :return: 4d array of edge weights with zero weights for allowable ones
+    :return: 3d array of edge weights with zero weights for allowable ones
     """
     for obj in range(edges.shape[0] - 1):
-        for label_l in range(edges.shape[2]):
-            for label_r in range(edges.shape[3]):
+        for label_l in range(edges.shape[1]):
+            for label_r in range(edges.shape[2]):
                 letter_index = alphabet.index(labels[label_l][0])
                 width = character_images[letter_index].size[0]
                 # ('A', 1) -> ('A', 2)
                 if labels[label_r][1] - labels[label_l][1] == 1 and labels[label_l][0] == labels[label_r][0]:
-                    edges[obj, obj + 1, label_l, label_r] = 0
+                    edges[obj, label_l, label_r] = 0
                 # ('A', width('A') - 1) -> ('B', 0)
                 if labels[label_l][1] == width - 1 and labels[label_r][1] == 0:
-                    edges[obj, obj + 1, label_l, label_r] = 0
+                    edges[obj, label_l, label_r] = 0
     return edges
 
 
@@ -120,5 +120,5 @@ if __name__ == "__main__":
 
     print(nodes[0, 0, 0])  # should be not inf
     print(nodes[0, 1, 0])  # should be inf
-    print(edges[0, 1, 0, 1])  # should be zero
-    print(edges[0, 1, 0, 0])  # should be inf
+    print(edges[0, 0, 1])  # should be zero
+    print(edges[0, 0, 0])  # should be inf
