@@ -8,7 +8,7 @@ def create_letters_images(characters, size):
     :param size: size of characters
     :return: generated images of given characters
     """
-    font = ImageFont.truetype('/usr/share/fonts/truetype/ubuntu/UbuntuMono-B.ttf', size)
+    font = ImageFont.truetype('/usr/share/fonts/truetype/ubuntu/Ubuntu-B.ttf', size)
     images = {}
     for c in characters:
         width, height = font.getsize(c)
@@ -33,10 +33,11 @@ def align_image_sizes(characters, images):
     :param images: generated images with different sizes
     :return: resized images
     """
-    width = max(images[c].size[0] for c in characters)
+    # width = max(images[c].size[0] for c in characters) -- if monospaced font is used
     height = max(images[c].size[1] for c in characters)
     for c in characters:
         image = images[c]
+        width = image.size[0]  # if not monospaced font is used
         images[c] = image.resize((width, height), Image.ANTIALIAS)
 
     return images
